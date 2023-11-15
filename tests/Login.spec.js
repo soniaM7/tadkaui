@@ -1,6 +1,5 @@
 const {test,expect} = require('@playwright/test');
 const { POManager } = require('../pageObjects/POManager');
-const assert = require("assert");
 import fs from 'fs';
 import path from'path';
 import {parse} from 'csv-parse/sync';
@@ -36,21 +35,22 @@ test("verify Food and Spices attachments", async ({page}) =>{
 
     const poManager = new POManager(page);
     const dashBoardPage = poManager.getDashboardPage();
-   // const convertPage = poManager.getConvertPage();
-
-    //await dashBoardPage.verifyTitle();
-   // await dashBoardPage.verifyServerStatus();
-    
+    const spicesPage = poManager.getSpicesPage();
+    const mixerPage = poManager.getMixerPage();
+   
     await dashBoardPage.clickToFoodandVerifyLogs();
     //await dashBoardPage.clearLogsFunction();
-
-    await dashBoardPage.clickToSpiecesandVerifyLogs();
+    await spicesPage.clickToSpiecesandVerifyLogs();
+    await mixerPage.clickToMixerAndVerifyLogs();
     await dashBoardPage.exportUserLogsToCsv();
+    
         
     const filePath = '../../user_Report/report.csv'; 
     const UserRecipeLogs = await readFile(filePath);
     console.log(UserRecipeLogs);
 
+
+    
  
     
 
