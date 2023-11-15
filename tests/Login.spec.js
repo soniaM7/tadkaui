@@ -4,6 +4,8 @@ import fs from 'fs';
 import path from'path';
 import {parse} from 'csv-parse/sync';
 const {readFile} = require('../Resources/Functions/helper');
+const {filePath} = require('../Resources/Functions/helper');
+
 
 
 test.beforeEach(async ({ page }) => {
@@ -39,14 +41,13 @@ test("verify Food and Spices attachments", async ({page}) =>{
     const mixerPage = poManager.getMixerPage();
    
     await foodBoxesPage.clickToFoodandVerifyLogs();
-    //await dashBoardPage.clearLogsFunction();
+    
     await spicesPage.clickToSpiecesandVerifyLogs();
     await mixerPage.clickToMixerAndVerifyLogs();
-    await foodBoxesPage.exportUserLogsToCsv();
+    const reliablePath = await filePath();
+    await foodBoxesPage.exportUserLogsToCsv(reliablePath);
     
-        
-    const filePath = '../../user_Report/report.csv'; 
-    const UserRecipeLogs = await readFile(filePath);
+    const UserRecipeLogs = await readFile('../../'+reliablePath);
     console.log(UserRecipeLogs);
     
     

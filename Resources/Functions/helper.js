@@ -33,7 +33,14 @@ readFile : async function(filePath){
               
     }*/
     return records;
-    }
+    },
+
+filePath: async function(){
+    let d = new Date();
+        const filename = d.getHours() + "_" + d.getMinutes();
+        const path = '../TadkaMaker/user_Report/report'+filename+'.csv';
+        return path;
+}
 
 }
 

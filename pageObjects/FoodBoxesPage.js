@@ -1,6 +1,7 @@
 const { expect } = require("@playwright/test");
 const {sleep } = require('../Resources/Functions/resources');
 const OR = JSON.parse(JSON.stringify(require('../ObjectRepository/ObjectRepository.json')));
+const {filePath} = require('../Resources/Functions/helper');
 
 
 
@@ -45,17 +46,15 @@ class FoodBoxesPage{
         }
     }
 
-    async exportUserLogsToCsv(){
-        const reliablePath = '../TadkaMaker/user_Report/report.csv';
-       // const reliablePath = 'file4.csv';
+    async exportUserLogsToCsv(path){
         const [ download ] = await Promise.all([
-            this.page.waitForEvent('download'), // wait for download to start
-            this.page.getByRole('button',{name:'Export to CSV'}).first().click()
+        this.page.waitForEvent('download'), // wait for download to start
+        this.page.getByRole('button',{name:'Export to CSV'}).first().click()
         ]);
 
         // wait for download to complete
-        await download.saveAs(reliablePath);      
-        this.page.close();
+        await download.saveAs(path);      
+        //this.page.close();
     };
 
 }
