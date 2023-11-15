@@ -1,12 +1,28 @@
-{ "comment 1":"------------------------LoginPage---------------------------------------",
-   "loginButton" : "this.page.locator('div button')",
-   "":""
+    { "//comment 1":"------------------------LoginPage---------------------------------------",
+    "loginButton" : "div button",
+
+    
+    "//comment 2":"------------------------FoodBoxesPage...................................",
+    "title" : "div .title",
+    "serverStatus" : "[class='anticon anticon-check-circle']",
+    "debugButton": "button[class*='ant-btn-default ant-btn-lg']",
+    "clearLogs" : "//span[text()='Clear Logs']",
+    "foodTab" : "#rc-tabs-0-tab-1",
+    "allFoodBoxes" : "[id='rc-tabs-0-panel-1'] .top", 
+    "foodBox" : "#rc-tabs-0-panel-1 .actionButton",
+    "userTable" : "div [class ='ant-table-tbody']", 
+    "userOptionExportToCsv" : "[class*='ant-btn css-dev-only-do-not-override']",
+    
+
+    "//comment 3":"------------------------SpicesPage...................................",
+    "spicesTab" : "#rc-tabs-0-tab-2",       
+    "allSpiecesBoxes" : "[id='rc-tabs-0-panel-2'] .top",
+    "spiecesBox" : "#rc-tabs-0-panel-2 .actionButton",
 
 
-
-
-
-
-
-
+    "//comment 4":"------------------------MixerPage...................................",
+    "mixerTab" : "#rc-tabs-0-tab-3",
+    "allMixerOptions" : "[id='rc-tabs-0-panel-3'] .top",
+    "mixerType" : "#rc-tabs-0-panel-3 .actionButton" 
+        
 }

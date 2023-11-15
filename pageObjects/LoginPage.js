@@ -1,7 +1,8 @@
+const OR = JSON.parse(JSON.stringify(require('../ObjectRepository/ObjectRepository.json')));
 class LoginPage{
     constructor(page){
         this.page = page;
-        this.loginButton =this.page.locator('div button');
+        //this.loginButton =this.page.locator('div button');
         
        }
 
@@ -10,7 +11,7 @@ class LoginPage{
     }
 
     async signIn(){
-        await this.loginButton.click();
+        await OR.click();
         await this.page.waitForLoadState('networkidle');
     }
 
