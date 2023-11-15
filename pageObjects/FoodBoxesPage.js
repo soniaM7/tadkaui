@@ -4,7 +4,7 @@ const {sleep } = require('../Resources/Functions/resources');
 
 
 
-class DashboardPage{
+class FoodBoxesPage{
     constructor(page){
         this.page=page;
         this.title = this.page.locator('div .title');
@@ -70,4 +70,4 @@ class DashboardPage{
     };
 
 }
-module.exports={DashboardPage};
+module.exports={FoodBoxesPage};

@@ -34,26 +34,20 @@ test.beforeEach(async ({ page }) => {
 test("verify Food and Spices attachments", async ({page}) =>{
 
     const poManager = new POManager(page);
-    const dashBoardPage = poManager.getDashboardPage();
+    const foodBoxesPage = poManager.getFoodBoxesPage();
     const spicesPage = poManager.getSpicesPage();
     const mixerPage = poManager.getMixerPage();
    
-    await dashBoardPage.clickToFoodandVerifyLogs();
+    await foodBoxesPage.clickToFoodandVerifyLogs();
     //await dashBoardPage.clearLogsFunction();
     await spicesPage.clickToSpiecesandVerifyLogs();
     await mixerPage.clickToMixerAndVerifyLogs();
-    await dashBoardPage.exportUserLogsToCsv();
+    await foodBoxesPage.exportUserLogsToCsv();
     
         
     const filePath = '../../user_Report/report.csv'; 
     const UserRecipeLogs = await readFile(filePath);
     console.log(UserRecipeLogs);
-
-
-    
- 
-    
-
     
     
    
