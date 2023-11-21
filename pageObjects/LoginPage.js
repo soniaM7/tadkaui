@@ -6,13 +6,8 @@ class LoginPage{
         
        }
 
-    async goTo(){
-        await this.page.goto('http://www.tadka.fun/tadkaui');    
-    }
-
-    async signIn(){
-        await OR.click();
-        await this.page.waitForLoadState('networkidle');
+    async verifyServerStatus(){
+        await this.page.locator('[style="margin: 1em;"] path').first().screenshot();
     }
 
 }

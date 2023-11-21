@@ -2,6 +2,8 @@
 const {FoodBoxesPage} = require('../pageObjects/FoodBoxesPage');
 const {MixerPage} = require('../pageObjects/MixerPage');
 const {SpicesPage} = require('../pageObjects/SpicesPage');
+const{Machine_Server_StatusPage} = require('../pageObjects/Machine_Server_StatusPage');
+const {CommonFunctionPage} = require('../pageObjects/CommonFunctionPage');
 //const {sleep,sleep1Sec } = require('../Resources/Functions/resources');
 
 
@@ -12,6 +14,8 @@ class POManager{
         this.FoodBoxesPage = new FoodBoxesPage(page);
         this.MixerPage = new MixerPage(page);
         this.SpicesPage = new SpicesPage(page);
+        this.Machine_Server_StatusPage = new Machine_Server_StatusPage(page);
+       // this.CommonFunctionPage = new CommonFunctionPage(page);
        
         }
     
@@ -30,6 +34,12 @@ class POManager{
     getSpicesPage(){
         return this.SpicesPage;
     }
+
+    getMachineStatusPage(){
+        return this.Machine_Server_StatusPage;
+    }
+
+    
 
 
 }

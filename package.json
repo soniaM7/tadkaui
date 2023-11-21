@@ -15,6 +15,7 @@
     "csv-parse": "^5.5.2",
     "csvtoxlsxconverter": "^1.6.0",
     "exceljs": "^4.4.0",
-    "fast-csv": "^4.3.6"
+    "fast-csv": "^4.3.6",
+    "tadka-machine-mock": "^1.0.1"
   }
 }

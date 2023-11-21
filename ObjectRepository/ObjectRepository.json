@@ -3,14 +3,15 @@
 
     
     "//comment 2":"------------------------FoodBoxesPage...................................",
+    
     "title" : "div .title",
-    "serverStatus" : "[class='anticon anticon-check-circle']",
+    "server_machine_Status_Icon" : "[class='anticon anticon-check-circle']",
     "debugButton": "button[class*='ant-btn-default ant-btn-lg']",
     "clearLogs" : "//span[text()='Clear Logs']",
     "foodTab" : "#rc-tabs-0-tab-1",
     "allFoodBoxes" : "[id='rc-tabs-0-panel-1'] .top", 
     "foodBox" : "#rc-tabs-0-panel-1 .actionButton",
-    "userTable" : "div [class ='ant-table-tbody']", 
+    "logTable" : "div [class ='ant-table-tbody']", 
     "userOptionExportToCsv" : "[class*='ant-btn css-dev-only-do-not-override']",
     
 

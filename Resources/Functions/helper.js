@@ -6,6 +6,10 @@ const {parse}= require('csv-parse/sync');
 import fs from 'fs';
 import path from'path';
 import {parse} from 'csv-parse/sync';
+import { expect } from '@playwright/test';
+import { sleep } from './resources';
+const mockMachine = require("tadka-machine-mock");
+const {OR}=require('../../ObjectRepository/ObjectRepository.json');
 //import{parse} from 'exceljs'
 //var XLSX = require("xlsx");
 
@@ -35,26 +39,71 @@ readFile : async function(filePath){
     return records;
     },
 
+    
+////////////////////////////////////////////////////////////////////////
+// Function to get file path with current time
+////////////////////////////////////////////////////////////////////////
+
+
 filePath: async function(){
     let d = new Date();
         const filename = d.getHours() + "_" + d.getMinutes();
         const path = '../TadkaMaker/user_Report/report'+filename+'.csv';
         return path;
-}
+},
+
+////////////////////////////////////////////////////////////////////////
+// Function to connect mock machine
+////////////////////////////////////////////////////////////////////////
+
+
+connectToMachine: async() =>{
+    mockMachine.connect('wss://tadka.fun/tadkaserver');
+    await sleep(500);
+    //console.log("Is machine Connected:",mockMachine.isConnected());
+    const connectMsg = '{"type":"message","timestamp":"-","msg":"Hi", "from":"machine","user":"tadka-1"}'
+    mockMachine.sendMessage(connectMsg);
+    await sleep(1000);
+    const value =mockMachine.isConnected();
+    return value;
+    },
+
+////////////////////////////////////////////////////////////////////////
+// Function to convert 24h clock
+////////////////////////////////////////////////////////////////////////
+
+async convertTo24HourFormat(timeString) { 
+        const [time, period] = timeString.split(' '); 
+        const [hour, minute,second] = time.split(':'); 
+        let formattedHour = parseInt(hour); 
+      
+        if (period === 'PM') { 
+            formattedHour += 12; 
+        } 
+      
+        return `${formattedHour}:${minute}:${second}`; 
+    } ,
+
+////////////////////////////////////////////////////////////////////////
+// Function to delete old reports
+////////////////////////////////////////////////////////////////////////
+
+
+    async deletOldReport(){
+        var allfiles = fs.readdirSync('../TadkaMaker/user_Report/');
+        console.log(allfiles);
+        for(let i=0; i<allfiles.length;i++){
+            const file = allfiles[i];
+            const path = "../TadkaMaker/user_Report/"+file;
+            try {
+                fs.unlinkSync(path);
+              
+                console.log("Delete File successfully.");
+            } catch (error) {
+                console.log(error);
+            }
+            
+        }
+    }
 
 }
-
-/*
-
-getExcelRowValues: async function (filePath, rowNumber,sheetName) {
-    const workbook = new ExcelJS.Workbook();
-    console.log("creator :" + workbook.creator)
-    return workbook.xlsx.readFile(filePath)
-        .then(async function () {
-            const worksheet = workbook.getWorksheet(sheetName);
-            console.log("sheet :" + worksheet)
-            const row = worksheet.getRow(rowNumber);
-            const values = row.values;
-            return values;
-        });
-}*/

@@ -3,8 +3,12 @@ const { POManager } = require('../pageObjects/POManager');
 import fs from 'fs';
 import path from'path';
 import {parse} from 'csv-parse/sync';
-const {readFile} = require('../Resources/Functions/helper');
-const {filePath} = require('../Resources/Functions/helper');
+import { connect } from 'http2';
+import { exit } from 'process';
+const {readFile,filePath,deletOldReport} = require('../Resources/Functions/helper');
+const { exportUserLogsToCsv } = require("../pageObjects/CommonFunctionPage");
+
+//import { exit } from 'node:process';
 
 
 
@@ -37,13 +41,21 @@ test("verify Food and Spices attachments", async ({page}) =>{
 
     const poManager = new POManager(page);
     const foodBoxesPage = poManager.getFoodBoxesPage();
+    const Machine_statusPage = poManager.getMachineStatusPage();
     const spicesPage = poManager.getSpicesPage();
-    const mixerPage = poManager.getMixerPage();
+    //const mixerPage = poManager.getMixerPage();
+
+    await foodBoxesPage.verifyTitle();
+    await Machine_statusPage.verifyServerStatus();
+    await Machine_statusPage.verifyServerStatusIcon();
+
    
     await foodBoxesPage.clickToFoodandVerifyLogs();
     
+    
     await spicesPage.clickToSpiecesandVerifyLogs();
-    await mixerPage.clickToMixerAndVerifyLogs();
+    //await mixerPage.clickToMixerAndVerifyLogs();
+    await deletOldReport();
     const reliablePath = await filePath();
     await foodBoxesPage.exportUserLogsToCsv(reliablePath);
     

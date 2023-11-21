@@ -1,7 +1,10 @@
 const { expect } = require("@playwright/test");
 const {sleep } = require('../Resources/Functions/resources');
 const OR = JSON.parse(JSON.stringify(require('../ObjectRepository/ObjectRepository.json')));
-const {filePath} = require('../Resources/Functions/helper');
+const {connectToMachine,convertTo24HourFormat} = require('../Resources/Functions/helper');
+const mockMachine = require("tadka-machine-mock");
+import fs from 'fs';
+const { readUserLogsTable,readMachineLogsTable,debugButtonStatus } = require("../pageObjects/CommonFunctionPage");
 
 
 
@@ -11,38 +14,45 @@ class FoodBoxesPage{
     }
 
     async verifyTitle(){
-       console.log("Title of the page is: " , await this.title.textContent());
+       console.log("Title of the page is: " , await this.page.locator(OR.title).textContent());
        expect(await this.page.locator(OR.title).textContent()).toEqual('Tadka Maker');
        
     }
 
-    async verifyServerStatus(){
-        expect(await this.page.locator(OR.serverStatus).screenshot({path:'serverStatus.png'})).toMatchSnapshot('serverStatusIcon.png');
-    }
-
-   /* async openDebug(){
-        await this.page.getByRole('button',{name:"Enable Debug"}).click();
-        await expect(this.clearLogs).toBeVisible();
-    }*/
-
-    async clickToFoodandVerifyLogs(){
+    async printFoodBoxesName(){
         await this.page.locator(OR.foodTab).click();
         const items = await this.page.locator(OR.allFoodBoxes).textContent();
         console.log("Food Boxes name: ",items);
-        await this.page.getByRole('button',{name:"Enable Debug"}).click();
-        expect(this.page.locator(OR.clearLogs)).toBeVisible();
+    }
+ 
+
+    async clickToFoodandVerifyLogs(){
+        const isConnected = await connectToMachine();
+        expect(isConnected).toBeTruthy();
+        await this.printFoodBoxesName();
+        await debugButtonStatus(this.page);
+        
         // click to food boxes one by one
         for(let i=0 ; i<4 ; i++){
             const buttonName = await this.page.locator(OR.foodBox).nth(i).textContent();
             console.log("Pressed box: ",buttonName);
             await this.page.locator(OR.foodBox).nth(i).click();   
-           await this.page.waitForSelector('[class = "ant-table-row ant-table-row-level-0 table-row-light"]');
-            const userTable_rows = await this.page.locator(OR.userTable).first().locator('tr');
+            const time = await readUserLogsTable(buttonName,this.page)
+           
+            const clock_24 = await convertTo24HourFormat(time);
+
+            const machineReceivingMessage = mockMachine.getUserMessages();
+            const value = machineReceivingMessage[i].msg;
+                        
+            //mock Machine Received message
+            const commandReceivedMessage= '{"type":"message","timestamp":"'+clock_24+'","msg":"202:'+value+'", "from":"machine","user":"tadka-1"}'
+            mockMachine.sendMessage(commandReceivedMessage);
             await sleep(1000);
-            const userTable_first_column = await userTable_rows.first().locator('td');
-            const logName= await userTable_first_column.last().textContent();
-            console.log("Log box name",logName);
-            expect(buttonName).toEqual(logName);
+            // command is completed and now moc machine can take other command
+            const commandCompleted = '{"type":"message","timestamp": "'+clock_24+'","msg":"200:'+value+'", "from":"machine","user":"tadka-1"}'
+            mockMachine.sendMessage(commandCompleted);
+            await sleep(1000);
+            await readMachineLogsTable(this.page);
         }
     }
 
@@ -51,7 +61,6 @@ class FoodBoxesPage{
         this.page.waitForEvent('download'), // wait for download to start
         this.page.getByRole('button',{name:'Export to CSV'}).first().click()
         ]);
-
         // wait for download to complete
         await download.saveAs(path);      
         //this.page.close();
