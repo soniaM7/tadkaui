@@ -43,7 +43,7 @@ test("verify Food and Spices attachments", async ({page}) =>{
     const foodBoxesPage = poManager.getFoodBoxesPage();
     const Machine_statusPage = poManager.getMachineStatusPage();
     const spicesPage = poManager.getSpicesPage();
-    //const mixerPage = poManager.getMixerPage();
+    const mixerPage = poManager.getMixerPage();
 
     await foodBoxesPage.verifyTitle();
     await Machine_statusPage.verifyServerStatus();
@@ -54,7 +54,7 @@ test("verify Food and Spices attachments", async ({page}) =>{
     
     
     await spicesPage.clickToSpiecesandVerifyLogs();
-    //await mixerPage.clickToMixerAndVerifyLogs();
+    await mixerPage.clickToMixerAndVerifyLogs();
     await deletOldReport();
     const reliablePath = await filePath();
     await foodBoxesPage.exportUserLogsToCsv(reliablePath);

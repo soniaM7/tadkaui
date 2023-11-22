@@ -53,6 +53,7 @@ class FoodBoxesPage{
             mockMachine.sendMessage(commandCompleted);
             await sleep(1000);
             await readMachineLogsTable(this.page);
+            break;
         }
     }
 

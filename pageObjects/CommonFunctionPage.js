@@ -28,6 +28,8 @@ module.exports = {
             if(value==='Enable Debug'){
                 await page.getByRole('button',{name:"Enable Debug"}).click();
                 await expect(page.locator("text=Clear Logs")).toBeVisible();
+                //this.page.on("dialog" , dialog => dialog.accept());
+                //await this.clearLogs.nth(2).click();
             }else{
                 await expect(page.locator("text=Clear Logs")).toBeVisible();
             }

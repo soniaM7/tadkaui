@@ -31,7 +31,9 @@ class SpicesPage{
             const clock_24 = await convertTo24HourFormat(time);
             
             const machineReceivingMessage = mockMachine.getUserMessages();
-            const value = machineReceivingMessage[i].msg;
+            console.log(machineReceivingMessage);
+            let j=i;
+            const value = machineReceivingMessage[j+1].msg;
                         
             //mock Machine Received message
             const commandReceivedMessage= '{"type":"message","timestamp":"'+clock_24+'","msg":"202:'+value+'", "from":"machine","user":"tadka-1"}'
@@ -43,6 +45,7 @@ class SpicesPage{
             await sleep(1000);
 
             await readMachineLogsTable(this.page);
+            break;
         }  
     
     }
