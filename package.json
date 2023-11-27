@@ -8,7 +8,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.39.0",
+    "@playwright/test": "^1.40.0",
     "@types/node": "^20.8.10"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "csvtoxlsxconverter": "^1.6.0",
     "exceljs": "^4.4.0",
     "fast-csv": "^4.3.6",
+    "playwright-chromium": "^1.41.0-alpha-nov-22-2023",
     "tadka-machine-mock": "^1.0.1"
   }
 }

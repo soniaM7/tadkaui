@@ -45,12 +45,13 @@ readFile : async function(filePath){
 ////////////////////////////////////////////////////////////////////////
 
 
-filePath: async function(){
+filePath: async function(tableName){
     let d = new Date();
         const filename = d.getHours() + "_" + d.getMinutes();
-        const path = '../TadkaMaker/user_Report/report'+filename+'.csv';
+        const path = `../TadkaMaker/Report/'${tableName}` + '_' + filename + '.csv';
         return path;
 },
+
 
 ////////////////////////////////////////////////////////////////////////
 // Function to connect mock machine
@@ -90,11 +91,11 @@ async convertTo24HourFormat(timeString) {
 
 
     async deletOldReport(){
-        var allfiles = fs.readdirSync('../TadkaMaker/user_Report/');
+        var allfiles = fs.readdirSync('../TadkaMaker/Report/');
         console.log(allfiles);
         for(let i=0; i<allfiles.length;i++){
             const file = allfiles[i];
-            const path = "../TadkaMaker/user_Report/"+file;
+            const path = "../TadkaMaker/Report/"+file;
             try {
                 fs.unlinkSync(path);
               

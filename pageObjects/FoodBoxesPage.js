@@ -4,8 +4,7 @@ const OR = JSON.parse(JSON.stringify(require('../ObjectRepository/ObjectReposito
 const {connectToMachine,convertTo24HourFormat} = require('../Resources/Functions/helper');
 const mockMachine = require("tadka-machine-mock");
 import fs from 'fs';
-const { readUserLogsTable,readMachineLogsTable,debugButtonStatus } = require("../pageObjects/CommonFunctionPage");
-
+const { readUserLogsTable,readMachineLogsTable,debugButtonStatus,verifyServerStatusIcon } = require("../pageObjects/allReusables");
 
 
 class FoodBoxesPage{
@@ -29,11 +28,16 @@ class FoodBoxesPage{
     async clickToFoodandVerifyLogs(){
         const isConnected = await connectToMachine();
         expect(isConnected).toBeTruthy();
+        await verifyServerStatusIcon(this.page);
         await this.printFoodBoxesName();
         await debugButtonStatus(this.page);
+
+        const pageObjectMixer = await this.page.locator(OR.mixerType);
+        const count =await pageObjectMixer.count();
+        console.log(count);
         
         // click to food boxes one by one
-        for(let i=0 ; i<4 ; i++){
+        for(let i=0 ; i<count ; i++){
             const buttonName = await this.page.locator(OR.foodBox).nth(i).textContent();
             console.log("Pressed box: ",buttonName);
             await this.page.locator(OR.foodBox).nth(i).click();   
@@ -42,6 +46,8 @@ class FoodBoxesPage{
             const clock_24 = await convertTo24HourFormat(time);
 
             const machineReceivingMessage = mockMachine.getUserMessages();
+            console.log("machineReceivingMessage");
+            console.log(machineReceivingMessage);
             const value = machineReceivingMessage[i].msg;
                         
             //mock Machine Received message
@@ -57,15 +63,6 @@ class FoodBoxesPage{
         }
     }
 
-    async exportUserLogsToCsv(path){
-        const [ download ] = await Promise.all([
-        this.page.waitForEvent('download'), // wait for download to start
-        this.page.getByRole('button',{name:'Export to CSV'}).first().click()
-        ]);
-        // wait for download to complete
-        await download.saveAs(path);      
-        //this.page.close();
-    };
 
 }
 module.exports={FoodBoxesPage};

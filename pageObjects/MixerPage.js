@@ -3,8 +3,8 @@ const{expect} = require('@playwright/test');
 const OR = JSON.parse(JSON.stringify(require('../ObjectRepository/ObjectRepository.json')));
 const {convertTo24HourFormat} = require('../Resources/Functions/helper');
 const mockMachine = require("tadka-machine-mock");
-const { readUserLogsTable,readMachineLogsTable,debugButtonStatus } = require("../pageObjects/CommonFunctionPage");
-
+const { readUserLogsTable,readMachineLogsTable,debugButtonStatus } = require("../pageObjects/allReusables");
+const { isArray } = require('util');
 
 class MixerPage{
     constructor(page){
@@ -25,9 +25,13 @@ class MixerPage{
     async clickToMixerAndVerifyLogs(){
         await this.printMixerOptionsName();
         await debugButtonStatus(this.page);
+
+        const pageObjectMixer = await this.page.locator(OR.mixerType);
+        const count =await pageObjectMixer.count();
+        console.log(count);
         
         // click to food boxes one by one
-        for(let i=0 ; i<4 ; i++){
+        for(let i=0 ; i<count ; i++){
             const buttonName = await this.page.locator(OR.mixerType).nth(i).textContent();
             console.log("Pressed box: ",buttonName);
             await this.page.locator(OR.mixerType).nth(i).click(); 
@@ -35,10 +39,11 @@ class MixerPage{
             const time = await readUserLogsTable(buttonName,this.page)
            
             const clock_24 = await convertTo24HourFormat(time);
-
-            let j=i;
+            
             const machineReceivingMessage = mockMachine.getUserMessages();
-            const value = machineReceivingMessage[j+2].msg;
+            const length = machineReceivingMessage.length;
+            let j=length-1;
+            const value = machineReceivingMessage[j].msg;
                         
             //mock Machine Received message
             const commandReceivedMessage= '{"type":"message","timestamp":"'+clock_24+'","msg":"202:'+value+'", "from":"machine","user":"tadka-1"}'
@@ -49,7 +54,6 @@ class MixerPage{
             mockMachine.sendMessage(commandCompleted);
             await sleep(1000);
             await readMachineLogsTable(this.page);
-            
         }
     }
 }

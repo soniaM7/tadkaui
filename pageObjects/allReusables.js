@@ -4,7 +4,7 @@ const {sleep } = require('../Resources/Functions/resources');
 const {expect} = require('@playwright/test');
 module.exports = {
         readUserLogsTable: async(buttonName,page) =>{
-        await page.waitForSelector('[class = "ant-table-row ant-table-row-level-0 table-row-light"]');
+            await page.waitForSelector('[class = "ant-table-row ant-table-row-level-0 table-row-light"]');
             const userTable_rows = await page.locator(OR.logTable).first().locator('tr');
             await sleep(1000);
             const userTable_column = await userTable_rows.first().locator('td');
@@ -34,7 +34,11 @@ module.exports = {
                 await expect(page.locator("text=Clear Logs")).toBeVisible();
             }
             
-        }
+        },
+        async verifyServerStatusIcon(page){
+            expect(await page.locator(OR.server_machine_Status_Icon).last().screenshot({path:'serverStatus.png'})).toMatchSnapshot('serverStatusIcon.png');
+        
+    }
 
     }
 //module.exports={readUserLogsTable};

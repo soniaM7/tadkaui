@@ -24,6 +24,12 @@
     "//comment 4":"------------------------MixerPage...................................",
     "mixerTab" : "#rc-tabs-0-tab-3",
     "allMixerOptions" : "[id='rc-tabs-0-panel-3'] .top",
-    "mixerType" : "#rc-tabs-0-panel-3 .actionButton" 
+    "mixerType" : "#rc-tabs-0-panel-3 .actionButton",
+
+    "//comment 5":"------------------------WaterPage...................................",
+    "waterTab" : "#rc-tabs-0-tab-4",
+    "allWaterLevel" : "[id='rc-tabs-0-panel-4'] .top",
+    "eachWaterLevel" : "#rc-tabs-0-panel-4 .actionButton" 
+    
         
 }
