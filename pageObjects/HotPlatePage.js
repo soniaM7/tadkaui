@@ -3,52 +3,46 @@ const {sleep } = require('../Resources/Functions/resources');
 const OR = JSON.parse(JSON.stringify(require('../ObjectRepository/ObjectRepository.json')));
 const {connectToMachine,convertTo24HourFormat} = require('../Resources/Functions/helper');
 const mockMachine = require("tadka-machine-mock");
-import fs from 'fs';
-const { readUserLogsTable,readMachineLogsTable,debugButtonStatus,verifyServerStatusIcon,compareUserAndMachineLogs } = require("../pageObjects/allReusables");
+const { readUserLogsTable,readMachineLogsTable,debugButtonStatus,compareUserAndMachineLogs } = require("./allReusables");
 
-
-class FoodBoxesPage{
+class HotPlatePage{
     constructor(page){
         this.page=page;
+        this.map1 = new Map();
+
+        this.map1.set(1, 'Low');
+        this.map1.set(2, 'Low Medium');
+        this.map1.set(3, 'Medium');
+        this.map1.set(4, 'Medium High');
+        this.map1.set(5, 'High');
     }
 
-    async verifyTitle(){
-       console.log("Title of the page is: " , await this.page.locator(OR.title).textContent());
-       expect(await this.page.locator(OR.title).textContent()).toEqual('Tadka Maker');
-       
-    }
+  
 
-    async printFoodBoxesName(){
-        await this.page.locator(OR.foodTab).click();
-        const items = await this.page.locator(OR.allFoodBoxes).textContent();
-        console.log("Food Boxes name: ",items);
-    }
- 
-
-    async clickToFoodandVerifyLogs(){
+    async clickToHotPlateAndVerifyLogs(){
         const isConnected = await connectToMachine();
         expect(isConnected).toBeTruthy();
-        await verifyServerStatusIcon(this.page);
-        await this.printFoodBoxesName();
         await debugButtonStatus(this.page);
+        await this.page.getByText('Hot plate: ').click();   
+        const hopPlateWindowTitle = await this.page.locator(OR.hopPlateWindowTitle).textContent();
+        expect(hopPlateWindowTitle).toEqual('Hot Plate Level');  
 
-        const pageObjectMixer = await this.page.locator(OR.foodBox);
-        const count =await pageObjectMixer.count();
-        console.log(count);
-        
-        // click to food boxes one by one
-        for(let i=0 ; i<count ; i++){
-            const buttonName = await this.page.locator(OR.foodBox).nth(i).textContent();
-            console.log("Pressed box: ",buttonName);
-            await this.page.locator(OR.foodBox).nth(i).click();   
-            const returnValue = await readUserLogsTable(buttonName,this.page)
-           
+        const offAtZero = await this.page.locator(OR.hotPlateLevel).first().textContent();
+        expect(offAtZero).toEqual('0Off');
+
+        for(let i=1; i<=5; i++){
+            await this.page.locator('strong').nth(i).click();
+            const heatLevel = await this.map1.get(i)
+            console.log("HeatLeavel is: "+heatLevel);
+            
+            const returnValue = await readUserLogsTable(heatLevel,this.page)
             const clock_24 = await convertTo24HourFormat(returnValue[0]);
 
             const machineReceivingMessage = mockMachine.getUserMessages();
             console.log("machineReceivingMessage");
             console.log(machineReceivingMessage);
-            const value = machineReceivingMessage[i].msg;
+            let j=i-1;
+            const value = machineReceivingMessage[j].msg;
                         
             //mock Machine Received message
             const commandReceivedMessage= '{"type":"message","timestamp":"'+clock_24+'","msg":"202:'+value+'", "from":"machine","user":"tadka-1"}'
@@ -61,13 +55,11 @@ class FoodBoxesPage{
             const machineLog= await readMachineLogsTable(this.page);
             let x = await machineLog.split(': ');
             let machineLogName= await x[1];
-            
 
             await compareUserAndMachineLogs(returnValue[1],machineLogName);
-            break;
+            
         }
+        await this.page.locator('//span[text()="OK"]').click();
     }
-
-
 }
-module.exports={FoodBoxesPage};
+module.exports={HotPlatePage};

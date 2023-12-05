@@ -3,7 +3,6 @@ const {sleep } = require('../Resources/Functions/resources');
 const OR = JSON.parse(JSON.stringify(require('../ObjectRepository/ObjectRepository.json')));
 const {connectToMachine,convertTo24HourFormat} = require('../Resources/Functions/helper');
 const mockMachine = require("tadka-machine-mock");
-import fs from 'fs';
 const { readUserLogsTable,readMachineLogsTable,debugButtonStatus } = require("./allReusables");
 
 
@@ -11,6 +10,7 @@ const { readUserLogsTable,readMachineLogsTable,debugButtonStatus } = require("./
 class WaterPage{
     constructor(page){
         this.page=page;
+        this.currentWaterValue = 18;
     }
 
     async printWaterLevelName(){
@@ -23,33 +23,53 @@ class WaterPage{
     console.log(button);
         switch(button){
             case '25 ml': 
-                   let commandReceivedMessage= '{"type":"message","timestamp":"1:58:06","msg":"w 16.46 17.65","from":"machine","user":"tadmak"}'
+                   let constantValue_25ml = 7/20;
+                   console.log("25ml Before currentWater value: "+this.currentWaterValue);
+                   this.currentWaterValue = this.currentWaterValue-constantValue_25ml;
+                   let commandReceivedMessage= '{"type":"message","timestamp":"1:58:06","msg":"w 16.46 '+this.currentWaterValue+'","from":"machine","user":"tadmak"}'
                     mockMachine.sendMessage(commandReceivedMessage);
                     await sleep(1000);
+                    console.log("25ml: "+await this.page.locator('[class="ant-progress-text"]').textContent());
                     break;
 
-            case '50 ml': 
-                    let commandReceivedMessage_50ml= '{"type":"message","timestamp":"1:58:06","msg":"w 16.46 16.95","from":"machine","user":"tadmak"}'
+            case '50 ml':
+                    let constantValue_50ml = 7/10;
+                    console.log("50ml Before currentWater value: "+this.currentWaterValue);
+                    this.currentWaterValue = this.currentWaterValue-constantValue_50ml;
+                    let commandReceivedMessage_50ml= '{"type":"message","timestamp":"1:58:06","msg":"w 16.46 '+this.currentWaterValue+'","from":"machine","user":"tadmak"}'
                     mockMachine.sendMessage(commandReceivedMessage_50ml);
                     await sleep(1000);
+                    console.log("50ml: "+await this.page.locator('[class="ant-progress-text"]').textContent());
                     break;
             
             case '100 ml': 
-                    let commandReceivedMessage_100ml= '{"type":"message","timestamp":"1:58:06","msg":"w 16.46 15.55","from":"machine","user":"tadmak"}'
+                    let constantValue_100ml = 14/10;
+                    console.log("100ml Before currentWater value: "+this.currentWaterValue);
+                    this.currentWaterValue = this.currentWaterValue-constantValue_100ml;
+                    let commandReceivedMessage_100ml= '{"type":"message","timestamp":"1:58:06","msg":"w 16.46 '+this.currentWaterValue+'","from":"machine","user":"tadmak"}'
                     mockMachine.sendMessage(commandReceivedMessage_100ml);
                     await sleep(1000);
+                    console.log("100ml: "+await this.page.locator('[class="ant-progress-text"]').textContent());
                     break;
 
             case '150 ml': 
-                    let commandReceivedMessage_150ml= '{"type":"message","timestamp":"1:58:06","msg":"w 16.46 13.45","from":"machine","user":"tadmak"}'
+                    let constantValue_150ml = 21/10;
+                    console.log("150ml Before currentWater value: "+this.currentWaterValue);
+                    this.currentWaterValue = this.currentWaterValue-constantValue_150ml;
+                    let commandReceivedMessage_150ml= '{"type":"message","timestamp":"1:58:06","msg":"w 16.46 '+this.currentWaterValue+'","from":"machine","user":"tadmak"}'
                     mockMachine.sendMessage(commandReceivedMessage_150ml);
                     await sleep(1000);
+                    console.log("150ml: "+await this.page.locator('[class="ant-progress-text"]').textContent());
                     break;
 
-            case '200 ml': 
-                    let commandReceivedMessage_200ml= '{"type":"message","timestamp":"1:58:06","msg":"w 16.46 10.65","from":"machine","user":"tadmak"}'
+            case '200 ml':
+                    let constantValue_200ml = 28/10;
+                    console.log("200ml Before currentWater value: "+this.currentWaterValue);
+                    this.currentWaterValue = this.currentWaterValue-constantValue_200ml; 
+                    let commandReceivedMessage_200ml= '{"type":"message","timestamp":"1:58:06","msg":"w 16.46 '+this.currentWaterValue+'","from":"machine","user":"tadmak"}'
                     mockMachine.sendMessage(commandReceivedMessage_200ml);
                     await sleep(1000);
+                    console.log("200ml: "+await this.page.locator('[class="ant-progress-text"]').textContent());
                     break;                
         }
     }
@@ -68,9 +88,9 @@ class WaterPage{
         await debugButtonStatus(this.page);
     }
 
-    async machineCommands(clock_24,i){
+    async machineCommandsReceived(clock_24,i){
             const machineReceivingMessage = mockMachine.getUserMessages();
-            console.log(machineReceivingMessage);
+            //console.log(machineReceivingMessage);
             let j=i;
             const value = machineReceivingMessage[j+1].msg;
             console.log(value);
@@ -94,12 +114,12 @@ class WaterPage{
             const time = await readUserLogsTable(buttonName,this.page)
             const clock_24 = await convertTo24HourFormat(time);
 
-            let value = await this.machineCommands(clock_24,i);
+            let value = await this.machineCommandsReceived(clock_24,i);
 
             await this.calculateWaterPersentage(buttonName);
             // command is completed and now moc machine can take other command
-            const commandCompleted = '{"type":"message","timestamp": "'+clock_24+'","msg":"200:'+value+'", "from":"machine","user":"tadka-1"}'
-            mockMachine.sendMessage(commandCompleted);
+            const machineCommandCompleted = '{"type":"message","timestamp": "'+clock_24+'","msg":"200:'+value+'", "from":"machine","user":"tadka-1"}'
+            mockMachine.sendMessage(machineCommandCompleted);
             await sleep(1000);
             await readMachineLogsTable(this.page);
             

@@ -1,3 +1,4 @@
+// this test file covers food,mixer and spieces
 const {test,expect} = require('@playwright/test');
 const { POManager } = require('../pageObjects/POManager');
 import fs from 'fs';
@@ -7,6 +8,8 @@ import { connect } from 'http2';
 import { exit } from 'process';
 import { sleep } from '../Resources/Functions/resources';
 const {readFile,filePath,deletOldReport} = require('../Resources/Functions/helper');
+const { verifyTitle } = require('../pageObjects/allReusables');
+
 //const { exportUserLogsToCsv } = require("../pageObjects/allReusables");
 
 //import { exit } from 'node:process';
@@ -92,7 +95,7 @@ test("verify Food, Spices and Mixer attachments", async ({page}) =>{
       
   };
 
-    await foodBoxesPage.verifyTitle();
+    await verifyTitle(page);
     await verifyServerStatus();
    
     await foodBoxesPage.clickToFoodandVerifyLogs();

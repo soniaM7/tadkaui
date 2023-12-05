@@ -13,7 +13,7 @@ module.exports = {
             expect(buttonName).toEqual(logName);
 
             const time= await userTable_column.first().textContent();
-            return time;
+            return [time,logName];
 
         },
         async readMachineLogsTable(page){
@@ -21,6 +21,11 @@ module.exports = {
             const machineTable_column = await machineTable_rows.first().locator('td');
             const loggName= await machineTable_column.nth(1).textContent();
             console.log(loggName);
+            return loggName;
+        },
+        async compareUserAndMachineLogs(userCommand,machineCommand){
+            expect(userCommand).toEqual(machineCommand);
+
         },
         async debugButtonStatus(page){
             const value = await page.locator(OR.debugButton).nth(1).textContent();
@@ -38,7 +43,12 @@ module.exports = {
         async verifyServerStatusIcon(page){
             expect(await page.locator(OR.server_machine_Status_Icon).last().screenshot({path:'serverStatus.png'})).toMatchSnapshot('serverStatusIcon.png');
         
-    }
+        },
+        async verifyTitle(page){
+            console.log("Title of the page is: " , await page.locator(OR.title).textContent());
+            expect(await page.locator(OR.title).textContent()).toEqual('Tadka Maker');
+            
+         }
 
     }
 //module.exports={readUserLogsTable};

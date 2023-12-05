@@ -4,6 +4,8 @@ const {MixerPage} = require('../pageObjects/MixerPage');
 const {SpicesPage} = require('../pageObjects/SpicesPage');
 const {WaterPage} = require('../pageObjects/WaterPage');
 const{Machine_Server_StatusPage} = require('../pageObjects/Machine_Server_StatusPage');
+const{HotPlatePage} = require('../pageObjects/HotPlatePage');
+const{MixContiniousPage}  = require('../pageObjects/MixContiniousPage');
 //const {sleep,sleep1Sec } = require('../Resources/Functions/resources');
 
 
@@ -16,6 +18,8 @@ class POManager{
         this.SpicesPage = new SpicesPage(page);
         this.Machine_Server_StatusPage = new Machine_Server_StatusPage(page);
         this.WaterPage = new WaterPage(page);
+        this.HotPlatePage = new HotPlatePage(page);
+        this.MixContiniousPage = new MixContiniousPage(page);
        // this.CommonFunctionPage = new CommonFunctionPage(page);
        
         }
@@ -42,8 +46,12 @@ class POManager{
     getWaterPage(){
         return this.WaterPage;
     }
-
-    
+    getHotPlatePage(){
+        return this.HotPlatePage;
+    }
+    getMixContiniousPage(){
+        return this.MixContiniousPage;
+    }
 
 
 }

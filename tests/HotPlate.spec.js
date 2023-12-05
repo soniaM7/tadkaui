@@ -1,6 +1,9 @@
 const {test} = require('@playwright/test');
 const { POManager } = require('../pageObjects/POManager');
 const {readFile,filePath,deletOldReport} = require('../Resources/Functions/helper');
+const { sleep } = require('../Resources/Functions/resources');
+const { verifyTitle } = require('../pageObjects/allReusables');
+
 
 
 test.beforeEach(async ({ page }) => {
@@ -10,65 +13,43 @@ test.beforeEach(async ({ page }) => {
     const loginButtonStatus = await loginButton.isVisible();
     console.log(loginButtonStatus);
 
-    if(loginButtonStatus == false){
-        await page.reload();
-        try{
-        await loginButton.click();
-        } catch (error) {
-        console.log(error);
-        }
-    
-    }
-    else{
-        await loginButton.click();
-    }
-    
-});
-
-   
-       /* switch (loginButtonStatus){
-            case 1:{
-                if(loginButtonStatus==false){
-                    await page.reload();
-                    try{
-                    await loginButton.click();
-                    }catch (error) {
-                    console.log(error);
-                    }
-                }
-                break;
-            }
-            
-            case 2: {
-                if(loginButtonStatus==true)
-                    await loginButton.click();
+    switch(loginButtonStatus){
+        case false:
+            await page.reload();
+            await sleep(1000);
+            try{
+            await loginButton.click();
+            } catch (error) {
+            console.log(error);
             }
             break;
-        }*/   
+
+        case true:
+            await loginButton.click();
+            break;
+    }
+});
     
 test("verify Water attachments", async ({page}) =>{
 
     const poManager = new POManager(page);
-    const waterPage= poManager.getWaterPage();
-    const foodBoxesPage = poManager.getFoodBoxesPage();
-
+    const hotPlatePage =poManager.getHotPlatePage();
     
-
-    async function verifyServerStatus(){
-        let re_connect_button = await page.getByRole('button',{name:"Re-connect"}).isVisible();
-        if(re_connect_button === true){
-            await page.getByRole('button',{name:"Re-connect"}).click();
-            let re_connect_button = await page.getByRole('button',{name:"Re-connect"}).isVisible();
-            if(re_connect_button==true){
-                console.log("server is down");
-                throw "server is down"
-            }
-          
+    
+    async function verifyServerStatus(re_connect_button_available){
+        console.log(re_connect_button_available);
+        switch(re_connect_button_available){
+            case true :
+                try{
+                    await page.getByRole('button',{name:"Re-connect"}).click();
+                } catch (error) {
+                    console.log("server is down"+error);
+                }
+                break;
+            case false:
+                break;
         }
-        else{
-            return;
-        }
-      }
+    }
 
     async function exportUserLogsToCsv(path,table){
         if(table=="userLogs"){
@@ -92,11 +73,13 @@ test("verify Water attachments", async ({page}) =>{
         
     };
 
-    await foodBoxesPage.verifyTitle();
-    await verifyServerStatus();
-    await waterPage.clickToWaterandVerifyLogs();
-    await waterPage.testWaterPersentage();
+    await verifyTitle(page);
+    let re_connect_button = await page.getByRole('button',{name:"Re-connect"}).isVisible();
+    await verifyServerStatus(re_connect_button);
 
+    await hotPlatePage.clickToHotPlateAndVerifyLogs();
+    
+   
     await deletOldReport();
 
     const userLogs_reliablePath = await filePath("userLogs");

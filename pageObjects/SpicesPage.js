@@ -3,7 +3,7 @@ const {sleep } = require('../Resources/Functions/resources');
 const OR = JSON.parse(JSON.stringify(require('../ObjectRepository/ObjectRepository.json')));
 const {convertTo24HourFormat} = require('../Resources/Functions/helper');
 const mockMachine = require("tadka-machine-mock");
-const { readUserLogsTable,readMachineLogsTable,debugButtonStatus } = require("../pageObjects/allReusables");
+const { readUserLogsTable,readMachineLogsTable,debugButtonStatus,compareUserAndMachineLogs } = require("../pageObjects/allReusables");
 
 
 class SpicesPage{
@@ -21,7 +21,7 @@ class SpicesPage{
         await this.printSpicesBoxesName();
         await debugButtonStatus(this.page);
 
-        const pageObjectMixer = await this.page.locator(OR.mixerType);
+        const pageObjectMixer = await this.page.locator(OR.spiecesBox);
         const count =await pageObjectMixer.count();
         console.log(count);
         
@@ -30,9 +30,9 @@ class SpicesPage{
             console.log("Pressed box: ",buttonName);
             await this.page.locator(OR.spiecesBox).nth(i).click(); 
 
-            const time = await readUserLogsTable(buttonName,this.page)
+            const returnValue = await readUserLogsTable(buttonName,this.page)
            
-            const clock_24 = await convertTo24HourFormat(time);
+            const clock_24 = await convertTo24HourFormat(returnValue[0]);
             
             const machineReceivingMessage = mockMachine.getUserMessages();
             const length = machineReceivingMessage.length;
@@ -49,7 +49,10 @@ class SpicesPage{
             mockMachine.sendMessage(commandCompleted);
             await sleep(1000);
 
-            await readMachineLogsTable(this.page);
+            const machineLog= await readMachineLogsTable(this.page);
+            let x = await machineLog.split(': ');
+            let machineLogName= await x[1];
+            await compareUserAndMachineLogs(returnValue[1],machineLogName);
             break;
         }  
     
