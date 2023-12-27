@@ -111,8 +111,8 @@ class WaterPage{
             const buttonName = await this.page.locator(OR.eachWaterLevel).nth(i).textContent();
             console.log("Pressed button: ",buttonName);
             await this.page.locator(OR.eachWaterLevel).nth(i).click();  
-            const time = await readUserLogsTable(buttonName,this.page)
-            const clock_24 = await convertTo24HourFormat(time);
+            const returnValue = await readUserLogsTable(buttonName,this.page)
+            const clock_24 = await convertTo24HourFormat(returnValue[0]);
 
             let value = await this.machineCommandsReceived(clock_24,i);
 
