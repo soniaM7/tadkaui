@@ -30,15 +30,15 @@ module.exports = {
         async debugButtonStatus(page){
             const value = await page.locator(OR.debugButton).nth(1).textContent();
             console.log(value);
-            if(value==='Enable Debug'){
-                await page.getByRole('button',{name:"Enable Debug"}).click();
-                await expect(page.locator("text=Clear Logs")).toBeVisible();
+            switch(value){
+                case "Enable Debug":
+                    await page.getByRole('button',{name:"Enable Debug"}).click();
+                    await expect(page.locator("text=Clear Logs")).toBeVisible();
                 //this.page.on("dialog" , dialog => dialog.accept());
                 //await this.clearLogs.nth(2).click();
-            }else{
-                await expect(page.locator("text=Clear Logs")).toBeVisible();
+                case "Disable Debug":
+                    await expect(page.locator("text=Clear Logs")).toBeVisible();
             }
-            
         },
         async verifyServerStatusIcon(page){
             expect(await page.locator(OR.server_machine_Status_Icon).last().screenshot({path:'serverStatus.png'})).toMatchSnapshot('serverStatusIcon.png');

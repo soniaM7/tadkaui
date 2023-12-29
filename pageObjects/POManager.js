@@ -6,6 +6,7 @@ const {WaterPage} = require('../pageObjects/WaterPage');
 const{Machine_Server_StatusPage} = require('../pageObjects/Machine_Server_StatusPage');
 const{HotPlatePage} = require('../pageObjects/HotPlatePage');
 const{MixContiniousPage}  = require('../pageObjects/MixContiniousPage');
+const{Practice_MixerPage} = require('../pageObjects/Practice_MixerPage');
 //const {sleep,sleep1Sec } = require('../Resources/Functions/resources');
 
 
@@ -20,6 +21,7 @@ class POManager{
         this.WaterPage = new WaterPage(page);
         this.HotPlatePage = new HotPlatePage(page);
         this.MixContiniousPage = new MixContiniousPage(page);
+        this.Practice_MixerPage = new Practice_MixerPage(page);
        // this.CommonFunctionPage = new CommonFunctionPage(page);
        
         }
@@ -51,6 +53,9 @@ class POManager{
     }
     getMixContiniousPage(){
         return this.MixContiniousPage;
+    }
+    getPractice_MixerPage(){
+        return this.Practice_MixerPage;
     }
 
 
